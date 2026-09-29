@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Case studies showing how natural language processing and recommendation systems use AI/ML models.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <title>Case Studies — Implementing AI/ML Models</title>
+  <style>
+    @font-face{font-family:LS;src:url('assets/fonts/liberation-sans-regular.woff2') format('woff2');font-weight:400;font-display:swap}
+    @font-face{font-family:LS;src:url('assets/fonts/liberation-sans-bold.woff2') format('woff2');font-weight:700;font-display:swap}
+    @font-face{font-family:LS;src:url('assets/fonts/liberation-sans-italic.woff2') format('woff2');font-style:italic;font-weight:400;font-display:swap}
+    @font-face{font-family:LS;src:url('assets/fonts/liberation-sans-bold-italic.woff2') format('woff2');font-style:italic;font-weight:700;font-display:swap}
+    @font-face{font-family:DM;src:url('assets/fonts/dm-mono-400.woff2') format('woff2');font-weight:400;font-display:swap}
+    @font-face{font-family:DM;src:url('assets/fonts/dm-mono-500.woff2') format('woff2');font-weight:500;font-display:swap}
+    :root{--ink:#171715;--paper:#f3f2eb;--white:#fbfaf5;--signal:#c8f23a;--positive:#2f6d1a;--quiet:#63635d;--line:#c8c7be;--orange:#c14e20;--blue:#356477;--sans:LS,Arial,sans-serif;--mono:DM,monospace}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;color:var(--ink);background:var(--paper);font:16px/1.56 var(--sans)}
+    a{color:inherit;text-decoration-thickness:.08em;text-underline-offset:.18em}
+    a:focus-visible,summary:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+    .shell{display:grid;grid-template-columns:15rem minmax(0,1fr);min-height:100vh}
+    .rail{position:sticky;top:0;display:flex;flex-direction:column;height:100vh;padding:1.2rem 1rem;color:#f4f4ef;background:var(--ink)}
+    .rail-top{display:grid;grid-template-columns:2.5rem 1fr;gap:.7rem;align-items:center;padding-bottom:1rem;border-bottom:1px solid #494943;text-decoration:none}
+    .mark{display:grid;width:2.35rem;height:2.35rem;place-items:center;color:var(--ink);background:var(--signal);font:500 .72rem var(--mono)}
+    .rail-kicker{margin:0;color:var(--signal);font: .59rem var(--mono);letter-spacing:.08em;text-transform:uppercase}
+    .rail-title{display:block;margin-top:.2rem;font-size:.85rem;font-weight:700;line-height:1.2}
+    .rail nav{margin-top:1.4rem}.rail ol{margin:0;padding:0;list-style:none}.rail li+li{margin-top:.16rem}
+    .rail li a{display:grid;grid-template-columns:1.65rem 1fr;gap:.4rem;padding:.46rem .3rem;color:#dddcd5;text-decoration:none;font-size:.75rem;line-height:1.25;border-left:2px solid transparent}
+    .rail li a:hover,.rail li a:focus-visible{color:#fff;background:#242421;border-left-color:var(--signal)}
+    .rail li span{color:var(--signal);font:.61rem/1.5 var(--mono)}
+    .rail-note{margin:1rem .3rem;color:#b4b4ad;font-size:.71rem;line-height:1.4}
+    .tidy{display:flex;gap:.52rem;align-items:center;margin-top:auto;padding:.9rem .25rem 0;color:#c5c5bd;border-top:1px solid #494943;font-size:.64rem;line-height:1.25;text-decoration:none}
+    .tidy img{width:1.7rem;height:1.7rem;object-fit:contain;filter:grayscale(1) contrast(1.1)}
+    main{min-width:0;overflow:hidden;background-image:linear-gradient(#0000 95%,rgb(17 17 17 / .045) 95%),linear-gradient(90deg,#0000 95%,rgb(17 17 17 / .045) 95%);background-size:100% 2rem,2rem 100%}
+    .topline{display:flex;justify-content:space-between;gap:1rem;padding:.7rem clamp(1.2rem,5vw,5rem);color:#e7e7e2;background:var(--ink);font:.63rem var(--mono);letter-spacing:.06em;text-transform:uppercase}
+    .topline span:last-child{color:var(--signal)}
+    .hero{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);column-gap:clamp(1.5rem,3vw,3rem);row-gap:clamp(1rem,2vw,1.5rem);align-items:start;max-width:90rem;margin:auto;padding:clamp(3rem,7vw,6rem) clamp(1.2rem,5vw,5rem) 4rem}
+    .eyebrow{margin:0 0 .8rem;color:var(--quiet);font:.65rem var(--mono);letter-spacing:.09em;text-transform:uppercase}
+    h1,h2,h3,p{margin-top:0}h1{max-width:48rem;margin-bottom:1rem;font-size:clamp(3rem,7vw,6.7rem);font-weight:700;letter-spacing:-.075em;line-height:.88}
+h1 .outline{color:transparent;-webkit-text-stroke:1.6px var(--ink)}
+    .subtitle{max-width:39rem;margin:0 0 1.4rem;color:var(--quiet);font-size:clamp(1.45rem,3vw,2.5rem);font-weight:700;letter-spacing:-.05em;line-height:1.02}
+    .lede{max-width:39rem;margin:0;font-size:1.08rem;line-height:1.5}
+    .hero .subtitle,.hero .lede{grid-column:1/-1;max-width:none;margin:0}
+    .hero-figure{margin:3rem 0 0;padding:1rem;color:#f5f5ef;background:var(--ink);outline:1px solid var(--ink);outline-offset:6px}
+    .figure-label{margin:0 0 .8rem;color:var(--signal);font:.6rem var(--mono);letter-spacing:.08em;text-transform:uppercase}
+    .hero-figure svg{display:block;width:100%;height:auto}
+    .figure-mobile{display:none}
+    .hero-figure figcaption{margin-top:.7rem;padding-top:.65rem;color:#c5c5bd;border-top:1px solid #494943;font:.66rem/1.45 var(--mono)}
+    .content{max-width:90rem;margin:auto;padding:0 clamp(1.2rem,5vw,5rem) 4rem}
+    .source-strip{display:grid;grid-template-columns:repeat(3,1fr);margin:0 0 1.2rem;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+    .source-strip div{padding:.85rem 1rem;border-right:1px solid var(--ink);font-size:.8rem}.source-strip div:last-child{border:0}
+    .source-strip b{display:block;margin-bottom:.22rem;color:var(--quiet);font:.58rem var(--mono);letter-spacing:.07em;text-transform:uppercase}
+    .section{display:grid;grid-template-columns:7.5rem minmax(0,1fr);gap:clamp(1rem,4vw,4rem);padding:4.4rem 0;border-top:1px solid var(--ink);scroll-margin-top:1rem}
+    .section-index b{display:block;font:500 2rem/.9 var(--mono);letter-spacing:-.1em}.section-index span{display:block;margin-top:.65rem;color:var(--quiet);font:.58rem var(--mono);letter-spacing:.07em;text-transform:uppercase}
+    .section-main{min-width:0}h2{max-width:55rem;margin-bottom:1rem;font-size:clamp(2rem,4.4vw,4.4rem);font-weight:700;letter-spacing:-.065em;line-height:.96}
+    h3{font-size:1.25rem;line-height:1.1;letter-spacing:-.03em}.intro{max-width:48rem;margin-bottom:1.8rem;color:#393934;font-size:1.03rem}
+    .bridge{max-width:53rem;margin:1.2rem 0;padding:.8rem 0 .15rem 1rem;border-left:3px solid var(--ink);font-size:.91rem}.bridge strong{background:var(--signal)}
+    .flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--ink);background:var(--white)}
+    .stage{position:relative;min-height:11rem;padding:1rem;border-right:1px solid var(--ink)}.stage:last-child{border-right:0}
+    .stage:not(:last-child)::after{position:absolute;top:1rem;right:-.55rem;z-index:1;padding:0 .12rem;color:var(--ink);background:var(--signal);content:'→';font:1rem var(--mono)}
+    .stage .num{display:grid;width:2rem;height:2rem;place-items:center;border:1px solid var(--ink);font:.62rem var(--mono)}
+    .stage h3{margin:1.35rem 0 .45rem}.stage p{margin:0;color:var(--quiet);font-size:.82rem;line-height:1.4}
+    .table-wrap{overflow-x:auto;margin-top:1.3rem;border:1px solid var(--ink);background:var(--white)}
+    #pipeline .table-wrap th,#pipeline .table-wrap td{padding:.45rem .65rem}
+    #pipeline .table-wrap > .caption{padding-inline:.65rem}
+    .opinion-table th.review-cell{background:var(--white);font:inherit;letter-spacing:normal;text-transform:none;text-align:left;font-weight:400;vertical-align:top}
+    .opinion-table .book-tag{display:block;margin-bottom:.3rem;font:700 .85rem var(--sans);letter-spacing:-.01em;color:var(--ink)}
+    .opinion-table .book-tag em{font-style:normal;font-weight:400;color:var(--quiet)}
+    .opinion-table .review-quote{display:block;color:var(--quiet);font-style:italic;font-size:.85rem;line-height:1.42}
+    .opinion-table td.signed-words{white-space:normal}
+    .opinion-table .pos{color:var(--positive)}
+    .opinion-table .neg{color:var(--orange)}
+    table{width:100%;border-collapse:collapse}th,td{padding:.68rem .8rem;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+    th{background:#e9e9e2;font:.63rem var(--mono);letter-spacing:.04em;text-transform:uppercase}tbody tr:last-child td{border-bottom:0}td code,code{font-family:var(--mono);font-size:.9em}
+    .caption{margin:.55rem 0 0;color:var(--quiet);font-size:.77rem}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.4rem}
+    .panel{border:1px solid var(--ink);background:var(--white)}.panel h3{margin:0;padding:.8rem 1rem;border-bottom:1px solid var(--ink)}.panel .panel-body{padding:1rem}.panel p:last-child,.panel ul:last-child{margin-bottom:0}
+    .panel.dark{color:#f4f4ef;background:var(--ink)}.panel.dark h3{border-color:#55554f}.panel.dark p,.panel.dark li{color:#d1d1ca}
+    .label{display:inline-block;margin-bottom:.45rem;color:var(--quiet);font:.58rem var(--mono);letter-spacing:.07em;text-transform:uppercase}.dark .label{color:var(--signal)}
+    .vocab{display:grid;grid-template-columns:repeat(4,1fr);margin-top:1.4rem;border-top:1px solid var(--ink);border-left:1px solid var(--ink)}
+    .vocab article{padding:.85rem;background:var(--white);border-right:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+    .vocab h3{margin:.2rem 0 .35rem;font-size:1rem}.vocab p{margin:0;color:var(--quiet);font-size:.78rem}
+    .flow-wide{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--ink);background:var(--white)}
+    .flow-wide div{position:relative;padding:1rem;border-right:1px solid var(--ink)}.flow-wide div:last-child{border:0}
+    .flow-wide b{display:block;margin-bottom:.3rem;font:.62rem var(--mono);text-transform:uppercase}.flow-wide p{margin:0;color:var(--quiet);font-size:.82rem}
+    .flow-wide div:not(:last-child)::after{position:absolute;top:.8rem;right:-.55rem;z-index:1;padding:0 .12rem;background:var(--signal);content:'→';font:1rem var(--mono)}
+    .notice{margin-top:1.2rem;padding:.9rem 1rem;border-left:3px solid var(--orange);background:var(--white);font-size:.87rem}
+    details{margin-top:1.2rem;border:1px solid var(--ink);background:var(--white)}summary{padding:.8rem 1rem;cursor:pointer;font-weight:700}details .inside{padding:0 1rem 1rem}details p:last-child{margin-bottom:0}
+    .sources li{margin:.45rem 0;font-size:.85rem}.provenance{padding:1rem;border:1px solid var(--ink);background:var(--white);font-size:.86rem}
+    footer{max-width:90rem;margin:auto;padding:1rem clamp(1.2rem,5vw,5rem) 3rem;color:var(--quiet);font-size:.74rem}
+    @media(max-width:1180px){.hero{grid-template-columns:1fr}.hero-figure{max-width:48rem;margin:0}.flow{grid-template-columns:repeat(2,1fr)}.stage:nth-child(2){border-right:0}.stage:nth-child(n+3){border-top:1px solid var(--ink)}.stage:nth-child(2)::after{display:none}}
+    @media(max-width:960px){#pipeline .two-col,#limits .two-col{grid-template-columns:1fr}}
+    .stopword-demo{display:grid;grid-template-columns:minmax(0,1fr) 15rem minmax(0,1fr);gap:1rem;align-items:stretch;margin-top:1.4rem}
+    .stopword-demo>div{min-width:0;position:relative;display:flex;flex-direction:column}
+    .stopword-demo>div:not(:last-child)::after{position:absolute;top:calc(50% - 1.1rem);right:-.8rem;z-index:1;padding:0 .12rem;color:var(--ink);background:var(--signal);content:'\2192';font:1rem var(--mono)}
+    .stopword-demo .panel{flex:1;display:flex;flex-direction:column}
+    .stopword-demo .panel-body{min-width:0;padding:.8rem;flex:1;display:flex}
+    .stopword-demo .word-cloud{display:block;flex:1;min-width:0;aspect-ratio:1;overflow:hidden}
+    .stopword-demo .word-cloud img{display:block;width:100%;height:100%;object-fit:contain}
+    .stopword-demo pre{min-width:0;flex:1;display:flex;align-items:center;margin:0;overflow-x:auto;font:.75rem/1.6 var(--mono);color:#e7e7e2}
+    .stopword-demo pre code{width:100%}
+    .stopword-caption{margin:.6rem 0 0;color:var(--quiet);font:.6rem var(--mono);letter-spacing:.07em;text-transform:uppercase;text-align:center}
+    @media(max-width:1100px){.stopword-demo{grid-template-columns:1fr;max-width:36rem;margin-inline:auto}.stopword-demo>div:not(:last-child)::after{top:auto;bottom:-.7rem;right:1rem;transform:rotate(90deg)}}
+    @media(max-width:780px){.shell{display:block}.rail{position:relative;display:grid;grid-template-columns:1fr auto;height:auto;padding:.8rem 1rem}.rail nav,.rail-note{display:none}.rail-top{padding:0;border:0}.tidy{margin:0;padding:0;border:0}.tidy span{display:none}.hero{padding-block:3rem}.section{grid-template-columns:1fr;gap:.8rem;padding-block:3rem}.section-index{display:flex;align-items:baseline;gap:.6rem}.source-strip{grid-template-columns:1fr}.source-strip div{border-right:0;border-bottom:1px solid var(--ink)}.source-strip div:last-child{border:0}.vocab{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:520px){.topline{font-size:.55rem}.flow{grid-template-columns:1fr}.stage{min-height:0;border-right:0;border-bottom:1px solid var(--ink)}.stage:last-child{border-bottom:0}.stage:nth-child(n+3){border-top:0}.stage:not(:last-child)::after{top:auto;right:1rem;bottom:-.55rem;transform:rotate(90deg)}.two-col{grid-template-columns:1fr}.flow-wide{grid-template-columns:1fr}.flow-wide div{border-right:0;border-bottom:1px solid var(--ink)}.flow-wide div:last-child{border-bottom:0}.flow-wide div:not(:last-child)::after{top:auto;right:1rem;bottom:-.55rem;transform:rotate(90deg)}.hero-figure svg{display:none}.figure-mobile{display:block;margin:0;color:#f5f5ef;font-size:.84rem;line-height:1.45}.figure-mobile span{display:block;padding:.55rem .65rem;border:1px solid #77776f}.figure-mobile b{color:var(--signal);font: .58rem var(--mono);text-transform:uppercase}.figure-mobile i{display:block;padding:.2rem 0;color:var(--signal);font:1rem var(--mono);font-style:normal;text-align:center}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <aside class="rail" aria-label="Page navigation">
+    <a class="rail-top" href="#top" aria-label="Implementing AI/ML Models: case studies">
+      <span class="mark" aria-hidden="true">NLP↗</span><span><span class="rail-kicker">Case Studies</span><span class="rail-title">Implementing AI/ML Models</span></span>
+    </a>
+    <nav aria-label="Sections"><ol>
+      <li><a href="#picture"><span>01</span><span>Working picture</span></a></li>
+      <li><a href="#pipeline"><span>02</span><span>Pipeline and task</span></a></li>
+      <li><a href="#text"><span>03</span><span>Text into features</span></a></li>
+      <li><a href="#choices"><span>04</span><span>Preprocessing choices</span></a></li>
+      <li><a href="#recommend"><span>05</span><span>Recommend a book</span></a></li>
+      <li><a href="#compare"><span>06</span><span>Two filtering families</span></a></li>
+      <li><a href="#limits"><span>07</span><span>Limits and checks</span></a></li>
+      <li><a href="#sources"><span>08</span><span>Sources and coverage</span></a></li>
+    </ol></nav>
+    <p class="rail-note">A visual overview of language processing, pipelines, and recommendations.</p>
+    <a class="tidy" href="https://github.com/TidyWeb/" aria-label="TidyWeb on GitHub"><img src="assets/tidyweb_logo.png" alt=""><span>Made with care<br>by TidyWeb</span></a>
+  </aside>
+  <main id="top">
+    <div class="topline"><span>Diploma in Data Analytics with Artificial Intelligence</span><span>Study overview</span></div>
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Natural language processing · recommender systems</p>
+        <h1>Words become <span class="outline">signals.</span></h1>
+      </div>
+      <figure class="hero-figure" aria-labelledby="central-caption">
+        <p class="figure-label">One review carries an opinion signal</p>
+        <svg viewBox="0 0 680 250" role="img" aria-labelledby="hero-title hero-desc">
+          <title id="hero-title">A mixed review becomes a signed score and teaching label</title>
+          <desc id="hero-desc">The review says the story is moving and vivid but the ending is predictable. The listed opinion words contribute plus one, plus one, and minus one. Their total is plus one, which gives the example the teaching label Liked.</desc>
+          <g fill="none" stroke="var(--signal)" stroke-width="2">
+            <path d="M170 133H190"/><path d="M395 133H413"/><path d="M517 133H535"/>
+          </g>
+          <g fill="var(--ink)" stroke="#f5f5ef" stroke-width="1.3">
+            <rect x="8" y="54" width="162" height="158"/><rect x="190" y="54" width="205" height="158"/>
+            <rect x="413" y="54" width="104" height="158"/><rect x="535" y="54" width="137" height="158"/>
+          </g>
+          <g fill="var(--signal)" font-family="DM,monospace" font-size="12">
+            <text x="21" y="80">REVIEW</text><text x="203" y="80">SIGNED OPINION WORDS</text>
+            <text x="426" y="80">NET SCORE</text><text x="548" y="80">TEACHING LABEL</text>
+          </g>
+          <g fill="#f5f5ef" font-family="LS,Arial,sans-serif" font-size="14">
+            <text x="21" y="109">“The story is</text><text x="21" y="129">moving and vivid,</text>
+            <text x="21" y="149">but the ending</text><text x="21" y="169">is predictable.”</text>
+            <text x="203" y="110" fill="var(--signal)">moving: +1</text><text x="203" y="132" fill="var(--signal)">vivid: +1</text>
+            <text x="203" y="154" fill="var(--orange)">predictable: −1</text>
+            <text x="426" y="128">+2 − 1</text><text x="426" y="158" fill="var(--signal)">= +1</text>
+            <text x="548" y="122" fill="var(--signal)" font-size="18">Liked</text><text x="548" y="146">from +1</text>
+          </g>
+        </svg>
+        <div class="figure-mobile" aria-label="Review to teaching-label flow">
+          <span><b>Review</b><br>“The story is moving and vivid, but the ending is predictable.”</span><i aria-hidden="true">↓</i>
+          <span><b>Signed opinion words</b><br>moving: +1 · vivid: +1 · predictable: −1</span><i aria-hidden="true">↓</i>
+          <span><b>Net score</b><br>+1 + +1 − 1 = +1</span><i aria-hidden="true">↓</i>
+          <span><b>Teaching label</b><br>Liked · from +1</span>
+        </div>
+        <figcaption id="central-caption">The signed words total +1, so the teaching label is “Liked”. Later sections show how reader feedback can support book suggestions.</figcaption>
+      </figure>
+      <p class="subtitle">Signals help us group, predict, and suggest.</p>
+      <p class="lede">Follow a bookshop review from raw text to a book suggestion. NLP turns the words into features a model can use. A recommender draws on book descriptions, reader choices, or both. The examples show how the steps connect.</p>
+    </header>
+    <div class="content">
+      <div class="source-strip" aria-label="Source and scope labels">
+        <div><b>LMS anchor</b>Topic 11 · “Natural Language Processing, Recommender Systems”</div>
+        <div><b>Independent enrichment</b>Official scikit-learn, NLTK, and Google ML references</div>
+        <div><b>Illustrative material</b>All bookshop books, reviews, and interactions are invented</div>
+      </div>
+
+      <section class="section" id="picture">
+        <div class="section-index"><b>01</b><span>Working picture</span></div>
+        <div class="section-main">
+          <h2>What does the computer receive?</h2>
+          <p class="intro">People write reviews in their own words. A model usually needs numbers arranged in a consistent shape. The first job is to represent each review or book with useful features; the next job is to use those features or behaviour records to answer a question.</p>
+          <div class="flow" aria-label="Four steps from language to useful recommendation">
+            <article class="stage"><span class="num">01</span><h3>Collect</h3><p>Reviews and book details are different kinds of input. Keep the source and meaning attached.</p></article>
+            <article class="stage"><span class="num">02</span><h3>Represent</h3><p>Turn selected words, phrases, or book details into numerical features.</p></article>
+            <article class="stage"><span class="num">03</span><h3>Learn a pattern</h3><p>Group similar texts, predict a label, or compare people, books, and interests.</p></article>
+            <article class="stage"><span class="num">04</span><h3>Check the result</h3><p>Does the output match the task and help a real reader? Check errors and unintended effects.</p></article>
+          </div>
+          <p class="bridge"><strong>Remember this:</strong> a feature is a column you’ve chosen to measure about each row in your data — one detail, turned into a number. In a review, that might be as simple as counting how many times the word “ending” shows up. It’s not the answer you’re trying to guess, like whether someone liked the book — that’s a different thing, called the label, or target.</p>
+        </div>
+      </section>
+
+      <section class="section" id="pipeline">
+        <div class="section-index"><b>02</b><span>Pipeline and task</span></div>
+        <div class="section-main">
+          <h2>How do review words lead to a label?</h2>
+          <p class="intro">Each listed positive word adds one point and each negative word subtracts one. A score above zero is “Liked”; zero or below is “Not liked”.</p>
+          <p class="caption"><code>X</code> is each review; <code>y</code> is its label.</p>
+          <div class="two-col">
+            <article class="panel dark"><h3>Positive words · +1 each</h3><div class="panel-body"><p style="color:var(--signal)">beautiful · gripping · charming · engaging · moving · vivid</p></div></article>
+            <article class="panel"><h3>Negative words · −1 each</h3><div class="panel-body"><p style="color:var(--orange)">boring · thin · predictable · disappointing · confusing · slow · flat · tedious</p></div></article>
+          </div>
+          <div class="table-wrap">
+            <p class="caption" id="opinion-table-note">Six books and their reviews. The signed opinion words are listed for each; add them for the net score, which sets the teaching label.</p>
+            <table class="opinion-table" aria-describedby="opinion-table-note">
+              <thead><tr><th>Book · review (X)</th><th>Signed opinion words</th><th>Net score</th><th>Teaching label (y)</th></tr></thead>
+              <tbody>
+                <tr><th scope="row" class="review-cell"><span class="book-tag">Book A <em>— The Long Return</em></span><span class="review-quote">“The writing is beautiful; the ending is gripping.”</span></th><td class="signed-words"><span class="pos">beautiful: +1 · gripping: +1</span></td><td>+2</td><td>Liked</td></tr>
+                <tr><th scope="row" class="review-cell"><span class="book-tag">Book B <em>— Bright Water</em></span><span class="review-quote">“The characters are charming, and the dialogue is engaging.”</span></th><td class="signed-words"><span class="pos">charming: +1 · engaging: +1</span></td><td>+2</td><td>Liked</td></tr>
+                <tr><th scope="row" class="review-cell"><span class="book-tag">Book C <em>— Harbor Lights</em></span><span class="review-quote">“The story is moving and vivid, but the ending is predictable.”</span></th><td class="signed-words"><span class="pos">moving: +1 · vivid: +1</span> · <span class="neg">predictable: −1</span></td><td>+1</td><td>Liked</td></tr>
+                <tr><th scope="row" class="review-cell"><span class="book-tag">Book D <em>— The Salt Line</em></span><span class="review-quote">“The plot is thin, and the ending is boring.”</span></th><td class="signed-words"><span class="neg">thin: −1 · boring: −1</span></td><td>−2</td><td>Not liked</td></tr>
+                <tr><th scope="row" class="review-cell"><span class="book-tag">Book E <em>— Low Tide</em></span><span class="review-quote">“The mystery was disappointing and confusing.”</span></th><td class="signed-words"><span class="neg">disappointing: −1 · confusing: −1</span></td><td>−2</td><td>Not liked</td></tr>
+                <tr><th scope="row" class="review-cell"><span class="book-tag">Book F <em>— Grey November</em></span><span class="review-quote">“The pacing is slow, flat, and tedious.”</span></th><td class="signed-words"><span class="neg">slow: −1 · flat: −1 · tedious: −1</span></td><td>−3</td><td>Not liked</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="flow" aria-label="A book-review classification pipeline">
+            <article class="stage"><span class="num">01</span><h3>Pair examples</h3><p>Each sentence in <code>X</code> stays beside its score-based teaching label in <code>y</code>.</p></article>
+            <article class="stage"><span class="num">02</span><h3>Turn words into counts</h3><p>A text transformer learns the training vocabulary and makes the same feature columns for each review.</p></article>
+            <article class="stage"><span class="num">03</span><h3>Learn from labels</h3><p>A classifier fits the count rows together with <code>y</code>. It learns a pattern linking words to the score-based labels.</p></article>
+            <article class="stage"><span class="num">04</span><h3>Estimate for new text</h3><p>Reuse the fitted steps on a new review, then return a predicted label.</p></article>
+          </div>
+          <div class="two-col">
+            <article class="panel"><h3>What does the transformer learn?</h3><div class="panel-body"><p>Here, <code>CountVectorizer</code> is the <strong>transformer</strong>. Its <code>.fit(X)</code> learns which word columns to use; its <code>.transform(X)</code> fills those columns with counts. For <em>Book A</em>, two of the non-zero values are <code>beautiful: 1</code> and <code>gripping: 1</code>.</p><p>The fitted transformer keeps that same vocabulary for later reviews, so every row has the same columns.</p></div></article>
+            <article class="panel dark"><h3>What do <code>.fit()</code> and <code>.predict()</code> do?</h3><div class="panel-body"><p>The classifier’s <code>.fit(X_counts, y)</code> learns a pattern between numeric count rows and the known labels. It is the final <strong>estimator</strong>: the step that learns this pattern and returns the prediction. The pipeline’s <code>.fit(X, y)</code> first fits and uses the transformer, then fits that estimator.</p><p>For a new review, <code>pipeline.predict(["the writing is beautiful"])</code> reuses the learned columns, including <code>beautiful: 1</code>, and returns a predicted label — <code>Liked</code>, in this case.</p></div></article>
+          </div>
+          <p class="bridge"><strong>Why fit on training rows?</strong> Learn the vocabulary from the training reviews, then use <code>.transform()</code> with those same columns on held-out reviews. Learning any part of the conversion from test rows would let information from the check set leak into training.</p>
+          <p class="bridge"><strong>What’s the handoff?</strong> In this example, the pipeline receives raw review text as <code>X</code> — but the classifier itself never sees the words. It only sees the transformed count numbers that come out of the step before it. <code>y</code> is used while fitting; it isn’t supplied when predicting something new. Six rows are still far too few for a useful model, so this shows the route, not a trustworthy result.</p>
+          <div class="notice"><strong>Why does this “work” so well?</strong> The teaching label here was built by adding up the same opinion words the classifier then receives as input — <code>beautiful</code>, <code>gripping</code>, and the rest sit on both sides of this example. That is not how a real labelled dataset works: a genuine label usually comes from something independent of the review text, such as a reader’s star rating or a thumbs up, which is what actually gives a classifier something new to learn. With six hand-scored rows built this way, the “model” can only really recover the rule that built it.</div>
+          <p class="caption">Source anchor: the LMS section “ML Pipeline and ML tasks” introduces the chained transformer-and-model workflow.</p>
+        </div>
+      </section>
+
+      <section class="section" id="text">
+        <div class="section-index"><b>03</b><span>Text into features</span></div>
+        <div class="section-main">
+          <h2>How can words become numbers?</h2>
+          <p class="intro">Come back to three of the six books from section 02: Book A, Book C, and Book D. They’re picked out because all three reviews use the word “ending” — the others don’t — which makes them useful for the next step. Count their words instead of scoring their opinions, and watch what happens to the one word all three share. The table makes one column for each word in their combined vocabulary and records how often it appears in each review.</p>
+          <div class="table-wrap">
+            <p class="caption" id="count-table-note">The same three reviews as Book A, Book C, and Book D in section 02, now counted instead of scored. Eleven words appear across them.</p>
+            <table aria-describedby="count-table-note">
+              <thead><tr><th>Book</th><th>beautiful</th><th>boring</th><th>ending</th><th>gripping</th><th>moving</th><th>plot</th><th>predictable</th><th>story</th><th>thin</th><th>vivid</th><th>writing</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Book A</th><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+                <tr><th scope="row">Book C</th><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+                <tr><th scope="row">Book D</th><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-wrap">
+            <p class="caption" id="tfidf-table-note">TF-IDF for the same three books and eleven terms. Values use scikit-learn’s default smoothed inverse-document weighting and row scaling (the squared values in each row add to about 1); rounded to three decimals.</p>
+            <table aria-describedby="tfidf-table-note">
+              <thead><tr><th>Book</th><th>beautiful</th><th>boring</th><th>ending</th><th>gripping</th><th>moving</th><th>plot</th><th>predictable</th><th>story</th><th>thin</th><th>vivid</th><th>writing</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Book A</th><td>0.546</td><td>0.000</td><td>0.323</td><td>0.546</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.000</td><td>0.546</td></tr>
+                <tr><th scope="row">Book C</th><td>0.000</td><td>0.000</td><td>0.283</td><td>0.000</td><td>0.479</td><td>0.000</td><td>0.479</td><td>0.479</td><td>0.000</td><td>0.479</td><td>0.000</td></tr>
+                <tr><th scope="row">Book D</th><td>0.000</td><td>0.546</td><td>0.323</td><td>0.000</td><td>0.000</td><td>0.546</td><td>0.000</td><td>0.000</td><td>0.546</td><td>0.000</td><td>0.000</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="bridge"><strong>Notice ending’s smaller weight:</strong> a word that turns up in every single review carries almost no power to tell them apart, so TF-IDF pushes it down hardest of all. Before the row is scaled, scikit-learn’s default gives <code>ending</code> a weight of about <code>1.0</code> because it appears in all three reviews; a one-review word like <code>beautiful</code> or <code>thin</code> gets about <code>1.693</code> instead. It then scales each row so the squared values add to about 1. In Book A, that leaves <code>ending: 0.323</code> sitting well below <code>beautiful: 0.546</code>, <code>gripping: 0.546</code>, and <code>writing: 0.546</code> — the same word, the same book, but a much smaller share of the signal. The exact values depend on the documents and vectorizer settings.</p>
+          <div class="notice"><strong>Why downweight a repeated word at all?</strong> TF-IDF is answering one question: “what makes this book’s review different from the others sitting next to it?” That’s a different question from “does this word predict Liked or Not liked?” A word can be common and still be a brilliant predictor of the label — if “good” showed up in thousands of positive reviews, that repetition would be exactly the signal you’d want, not noise. TF-IDF doesn’t downweight a word for being unhelpful at predicting sentiment; it downweights a word for being unhelpful at telling documents apart, which is a different job. Worth being clear: the Liked/Not liked scoring in section 02 didn’t use TF-IDF at all — it used plain word counts and the hand-scored word key — so nothing in this section undoes anything you learned there.</div>
+          <div class="vocab" aria-label="Four key text representation terms">
+            <article><span class="label">Step</span><h3>Token</h3><p>A text unit, such as a word or punctuation mark, chosen by a tokenizer.</p></article>
+            <article><span class="label">Representation</span><h3>Bag of words</h3><p>A document represented by its word counts; ordinary word order is lost.</p></article>
+            <article><span class="label">Weighting</span><h3>TF-IDF</h3><p>Rewards a word for repeating inside one document, but down-weights it if it also turns up in many other documents — a word that’s everywhere can’t help tell documents apart.</p></article>
+            <article><span class="label">Model input</span><h3>Vector</h3><p>A fixed set of numerical feature values for one review or item.</p></article>
+          </div>
+          <div class="notice"><strong>Boundary:</strong> TF-IDF changes how strongly terms count as features. It does not know that “not good” is negative, that an author’s name like “Elena Frost” is one person split into two tokens, or that two different words are synonyms. A downstream model can learn useful patterns from its input, but the result depends on how the text was represented.</div>
+        </div>
+      </section>
+
+      <section class="section" id="choices">
+        <div class="section-index"><b>04</b><span>Preprocessing choices</span></div>
+        <div class="section-main">
+          <h2>Cleaning text can remove clues.</h2>
+          <p class="intro">Tokenising, removing common words, and reducing word forms can make a dataset easier to analyse. Each choice changes what the model is able to notice. Treat these as decisions to check against the task, not automatic housekeeping.</p>
+          <p class="bridge"><strong>Watch stop-word filtering do its job:</strong> imagine a few more bookshop reviews like the ones already on this page. Count every word as it stands, and a handful of meaningless little words bury everything else. Remove just those words, and the real content rises to the top.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Operation</th><th>What changes?</th><th>Question to ask</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Tokenisation</th><td>Text is split into chosen units, such as words, word pieces, or sentences.</td><td>Do punctuation, apostrophes, names, or emoji carry information here?</td></tr>
+                <tr><th scope="row">Stop-word filtering</th><td>A selected list of frequent words is removed.</td><td>Could “not”, “without”, or a common domain word change the prediction?</td></tr>
+                <tr><th scope="row">Stemming</th><td>A rule strips word endings or beginnings to make rougher forms.</td><td>Could the shortened form merge words that should stay distinct?</td></tr>
+                <tr><th scope="row">Lemmatisation</th><td>A word is mapped toward a dictionary base form, using linguistic information.</td><td>Does the tool know the word’s part of speech and intended use?</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="stopword-demo" aria-label="Word counts before and after stop-word filtering">
+            <div>
+              <div class="panel"><div class="panel-body"><picture class="word-cloud"><img src="assets/wordcloud-before-mobile.png" width="680" height="690" decoding="async" alt="Illustrative word cloud before filtering: the, and, is, a, was and other common words are largest, while the review words are harder to spot."></picture></div></div>
+              <p class="stopword-caption">Output before filtering</p>
+            </div>
+            <div>
+              <div class="panel dark"><div class="panel-body"><pre><code>stop_words = [
+    "the", "is", "and", "a",
+    "but", "was", "of", "in",
+    "to", "that", "so", "with",
+    "it", "on", "for", "from",
+    "this", "at", "by", "an",
+    "be", "as", "or", "if",
+    "not", "we", "they", "will",
+    ...
+]</code></pre></div></div>
+              <p class="stopword-caption">Filtering</p>
+            </div>
+            <div>
+              <div class="panel"><div class="panel-body"><picture class="word-cloud"><img src="assets/wordcloud-after-mobile.png" width="680" height="690" decoding="async" alt="Illustrative word cloud after filtering: ending, story, characters, beautiful, gripping and other review words stand out."></picture></div></div>
+              <p class="stopword-caption">Output after filtering</p>
+            </div>
+          </div>
+          <p class="caption">Illustrative frequencies from the six example reviews plus imagined bookshop reviews. Larger words appear more often; these images are not measured outputs from the six-row table.</p>
+          <div class="two-col">
+            <article class="panel"><h3>Meaning can live in small details</h3><div class="panel-body"><p><code>“not good”</code> and <code>“good”</code> share a word, but the first includes negation. A punctuation mark can change the tone. Two tokens can also be a person’s full name.</p><p class="caption">The same problem shows up with names: tokenising “Elena Frost” splits one person into two separate words, with nothing telling the model they belong together.</p></div></article>
+            <article class="panel dark"><h3>Reduced form does not mean understood form</h3><div class="panel-body"><p><span class="label">Stemming</span><br>A stemmer may map related words to a shortened stem that is not itself a normal dictionary word.</p><p><span class="label">Lemmatisation</span><br>A lemmatiser may use word role and vocabulary to choose a base form. Neither guarantees that context or meaning is preserved.</p></div></article>
+          </div>
+          <p class="bridge"><strong>Check the changed input:</strong> compare a few original messages with their processed tokens. If an important clue disappeared, revise the preprocessing before fitting a model.</p>
+        </div>
+      </section>
+
+      <section class="section" id="recommend">
+        <div class="section-index"><b>05</b><span>Recommend a book</span></div>
+        <div class="section-main">
+          <h2>Two routes can suggest the same title.</h2>
+          <p class="intro">Predicting a review’s label, in sections 02 to 04, was one kind of task. Comparing people, books, and interests — the other task section 01 named at the start — is a different one, and it draws on different evidence. Suppose Maya liked two of the books from section 02 — Bright Water and Harbor Lights, both set on the coast. The system may use the books’ descriptions and Maya’s own interests, or compare Maya’s reading pattern with other readers. These routes use different evidence.</p>
+          <div class="table-wrap">
+            <table>
+              <caption class="caption">Setting and genre for the three books above — the features a content-based system would compare against a reader’s history.</caption>
+              <thead><tr><th>Book</th><th>Setting</th><th>Genre</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Book B · Bright Water</th><td>Coastal</td><td>Literary fiction</td></tr>
+                <tr><th scope="row">Book C · Harbor Lights</th><td>Coastal</td><td>Literary fiction</td></tr>
+                <tr><th scope="row">Book E · Low Tide</th><td>Coastal</td><td>Mystery</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <caption class="caption">Ava is a new reader with no recorded interactions.</caption>
+              <thead><tr><th>Reader</th><th>Book B · Bright Water</th><th>Book C · Harbor Lights</th><th>Book E · Low Tide</th></tr></thead>
+              <tbody><tr><th scope="row">Maya</th><td>Liked</td><td>Liked</td><td>Not yet seen</td></tr><tr><th scope="row">Leon</th><td>Not seen</td><td>Liked</td><td>Liked</td></tr><tr><th scope="row">Noor</th><td>Liked</td><td>Not yet seen</td><td>Not yet seen</td></tr><tr><th scope="row">Ava · new reader</th><td>No history</td><td>No history</td><td>No history</td></tr></tbody>
+            </table>
+          </div>
+          <div class="two-col">
+            <article class="panel"><h3>Use the books’ features</h3><div class="panel-body"><span class="label">Content-based filtering</span><p>Describe books with features—genre, setting, or words in the description—then compare candidates with Maya’s own interests. Which feature you match on changes the answer: by setting, all three books are coastal, so Low Tide looks like a fit. By genre, Bright Water and Harbor Lights are literary fiction and Low Tide is a mystery, so genre alone wouldn’t suggest it.</p><p><strong>Evidence:</strong> Maya’s history and book properties.</p></div></article>
+            <article class="panel dark"><h3>Use patterns across readers</h3><div class="panel-body"><span class="label">Collaborative filtering</span><p>Look for patterns in the reader–book table. If people with reading patterns like Maya’s also like a book she has not tried, that book becomes a candidate.</p><p><strong>Evidence:</strong> interactions from many readers and books.</p></div></article>
+          </div>
+          <p class="bridge"><strong>Same books, different feature, different answer:</strong> match on setting and Low Tide looks like a good suggestion for Maya — all three books are coastal. Match on genre instead and it doesn’t: Maya’s read two literary novels, and Low Tide is a mystery. Content-based filtering only ever answers the question you set it up to ask; picking the feature is picking the answer.</p>
+          <p class="bridge"><strong>One possible collaborative clue:</strong> Noor and Maya both liked Bright Water. If Noor later likes another book, that is a candidate to consider for Maya. The tiny table is only an illustration; a real system needs more data, scoring, and careful evaluation.</p>
+        </div>
+      </section>
+
+      <section class="section" id="compare">
+        <div class="section-index"><b>06</b><span>Two filtering families</span></div>
+        <div class="section-main">
+          <h2>Ask what evidence drives the suggestion.</h2>
+          <p class="intro">“Content-based” means the system compares item characteristics with one reader’s interests. “Collaborative” means it learns from patterns across readers and items. A useful first check is: whose information does the recommendation use?</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Question</th><th>Content-based</th><th>Collaborative</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Main evidence</th><td>Features of items plus one reader’s preferences or behaviour</td><td>Interactions across many readers and items</td></tr>
+                <tr><th scope="row">Can suggest an unfamiliar kind of item?</th><td>Only if its features connect to the reader’s known interests</td><td>Yes, when other readers with related patterns have chosen it</td></tr>
+                <tr><th scope="row">First-use weakness</th><td>Needs item features and some clue about the new reader</td><td>Has little evidence for a brand-new reader or item</td></tr>
+                <tr><th scope="row">Simple picture</th><td>“You liked these features; here is another item with related features.”</td><td>“Readers with a similar pattern also liked this item.”</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="notice"><strong>Clarification to the LMS wording:</strong> the transcript describes “content filtering” using a person’s age and gender, then comparing with others of similar demographics. Standard content-based filtering is usually about matching item features to that user’s interests. Similar demographic profiles are user features and may contribute to a broader or hybrid recommender, but they are not the defining idea of content-based filtering.</div>
+          <div class="flow-wide" aria-label="A recommender system often has three stages">
+            <div><b>1 · Candidate generation</b><p>Find a manageable set of books worth considering.</p></div><div><b>2 · Scoring</b><p>Estimate how relevant each candidate is for this request.</p></div><div><b>3 · Re-ranking</b><p>Adjust the final order for goals such as variety or freshness.</p></div>
+          </div>
+          <p class="caption">Independent extension from Google’s ML guidance: a recommender is often a multi-stage system, not just one “filtering algorithm”.</p>
+        </div>
+      </section>
+
+      <section class="section" id="limits">
+        <div class="section-index"><b>07</b><span>Limits and checks</span></div>
+        <div class="section-main">
+          <h2>Useful suggestions need evidence and review.</h2>
+          <p class="intro">The same system can recommend a good next read or repeat a narrow pattern. Check both what went into it and what people experience when it is used.</p>
+          <div class="vocab" aria-label="Four practical limitations">
+            <article><span class="label">Sparse history</span><h3>Cold start</h3><p>A new reader or new book has little interaction history to learn from.</p></article>
+            <article><span class="label">Language</span><h3>Context</h3><p>Counts can miss negation, word order, tone, and the meaning of a phrase.</p></article>
+            <article><span class="label">Coverage</span><h3>Over-repetition</h3><p>Similarity alone can keep recommending more of what is already familiar.</p></article>
+            <article><span class="label">Measurement</span><h3>Wrong success signal</h3><p>Clicks or ratings are only proxies; check whether the recommendation helps the intended user.</p></article>
+          </div>
+          <p class="caption"><strong>Cold-start example:</strong> look at Ava’s row in the interaction table in section 05. It contains no feedback to compare with Maya, Leon, or Noor.</p>
+          <div class="two-col">
+            <article class="panel"><h3>What interaction history cannot tell us</h3><div class="panel-body"><p>From this table alone, collaborative filtering has no record of Ava’s choices, so it cannot infer which book she personally prefers. The blank history is missing evidence, not evidence that she dislikes every title.</p></div></article>
+            <article class="panel dark"><h3>What the service can still do</h3><div class="panel-body"><p>It could show generally popular titles or ask Ava what she likes. If she chooses “coastal”, the book descriptions make Bright Water and Harbor Lights possible content-based matches. That is a starting clue, not a preference learned from her past clicks.</p></div></article>
+          </div>
+          <details><summary>Quick self-check: choose the evidence</summary><div class="inside"><p>A reader likes one coastal novel. The system recommends another book because its description contains related words. Which route is this?</p><p><strong>Reveal:</strong> content-based filtering. The clue is the match between the book’s features and this reader’s interest. If it were using the behaviour of similar readers, that would be collaborative filtering.</p></div></details>
+          <details><summary>Quick self-check: what did TF-IDF change?</summary><div class="inside"><p>A word used in almost every review receives less weight than a word that distinguishes a smaller set of reviews. Did TF-IDF understand the review’s meaning?</p><p><strong>Reveal:</strong> no. TF-IDF changed the numerical weight of word features. It did not interpret the review or infer meaning on its own.</p></div></details>
+        </div>
+      </section>
+
+      <section class="section" id="sources">
+        <div class="section-index"><b>08</b><span>Sources and coverage</span></div>
+        <div class="section-main">
+          <h2>What is captured—and what remains ahead?</h2>
+          <p class="intro">The LMS transcript is preserved in <code>raw-transcript.md</code>; source-based corrections and extensions are explained in <code>analysis-and-enrichment.md</code> and recorded in <code>primary-research.md</code>.</p>
+          <div class="provenance"><strong>LMS sources:</strong> Advanced Data Analysis Techniques → Topic 11 “Case studies of implementing AI/ML models in different industries” → “Natural Language Processing, Recommender Systems” (lesson 537173, section 2068110) and “ML Pipeline and ML tasks” (section 2068111). The guide’s examples and diagrams are original teaching material, not course outputs. Notebook cells were not run.</div>
+          <ul class="sources">
+            <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html">scikit-learn: <code>CountVectorizer</code> text-to-count API</a> · <a href="https://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction">text features, bag of words, and TF-IDF weighting</a></li>
+            <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html">scikit-learn: <code>TfidfVectorizer</code> defaults, smoothed IDF, and row normalisation</a></li>
+            <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html">scikit-learn: <code>Pipeline</code> fit/transform/predict sequence</a> · <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html"><code>StandardScaler</code></a></li>
+            <li><a href="https://www.nltk.org/book/ch03.html">NLTK Book: processing raw text, tokenisation, stemming, and lemmatisation</a></li>
+            <li><a href="https://developers.google.com/machine-learning/recommendation/content-based/basics">Google ML: content-based filtering</a> · <a href="https://developers.google.com/machine-learning/recommendation/collaborative/basics">collaborative filtering</a></li>
+            <li><a href="https://developers.google.com/machine-learning/recommendation/collaborative/summary">Google ML: collaborative filtering limits, including cold start</a> · <a href="https://developers.google.com/machine-learning/recommendation/dnn/scoring">alternative candidate sources, including popular items</a></li>
+            <li><a href="https://developers.google.com/machine-learning/recommendation/overview/types">Google ML: recommendation system stages</a></li>
+          </ul>
+          <div class="notice"><strong>Provenance and capture boundary:</strong> the opinion-word key and scores, pipeline, weighted table, and Ava cold-start examples above are independent teaching additions with invented data; they are not LMS demonstrations or outputs. During capture, the LMS notebook for “ML Pipeline and ML tasks” changed from Start to Completed immediately after it was opened. No notebook execution, quiz, reset, or submission occurred. “Split your data, fit a model, predict and save the model” then appeared as Start, while NLP Parts 1 and 2 remained Locked; those sections were not captured. This revision expands the two captured sections but does not claim to complete the requested sweep through NLP Part 2.</div>
+        </div>
+      </section>
+    </div>
+    <footer>Private study companion · built from the visible LMS transcript and labelled independent research · no notebook cells were run and no quiz answers were submitted.</footer>
+  </main>
+</div>
+</body>
+</html>
